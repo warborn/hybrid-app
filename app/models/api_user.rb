@@ -1,4 +1,6 @@
 class ApiUser < User
+  include Tokenizable
+
   self.table_name = 'users'
 
   devise :recoverable, :validatable,
