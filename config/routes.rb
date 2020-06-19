@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   if Rails.env.development?
     mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
+    post "/graphql", to: "api/graphql#execute"
   end
 
   devise_for :users
