@@ -1,5 +1,9 @@
 # README
 
+This project demonstrate the use of `session` and `JWT` authentication in the same app.
+
+For the `JWT` authentication supports two mechanisms `REST` and `GraphQL`
+
 ## Installation
 
 Clone the project and install the dependencies
@@ -33,7 +37,7 @@ You can create a new account [here](http://localhost:3000/users/sign_up)
 
 The project supports authentication via GraphQL, you can use the following queries:
 
-Login
+### Login
 
 ```graphql
 mutation LOGIN {
@@ -45,7 +49,7 @@ mutation LOGIN {
 }
 ```
 
-Logout
+### Logout
 
 ```graphql
 mutation {
@@ -53,7 +57,7 @@ mutation {
 }
 ```
 
-Getting logged in user data:
+### Getting logged in user data:
 
 ```graphql
 query {
@@ -64,8 +68,36 @@ query {
 }
 ```
 
+GraphQL is mounted in the route `/api/graphql`
+
 Note: The `logout` mutation and `me` query are protected by the authentication mechanism, in order to run them properly, an authorization header with a valid token should be sent along with the request.
 
 ```
 Authorization: Bearer {VALID_TOKEN}
 ```
+
+## REST API
+
+The project supports authentication via a REST API
+
+### Login:
+
+`[POST] -> /api/login`
+```json
+{
+	"api_user": {
+		"email": "root@app.com",
+		"password": "password"
+	}
+}
+```
+
+### Logout:
+
+`[DELETE] -> /api/logout`
+
+#### Get current user data:
+
+`[GET] -> /api/users/me`
+
+Note: The `/api/logout` `/api/users/me` endpoints are protected by the authentication mechanism, in order to run them properly, an authorization header with a valid token should be sent along with the request.
