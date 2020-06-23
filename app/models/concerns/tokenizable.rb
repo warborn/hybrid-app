@@ -12,7 +12,7 @@ module Tokenizable
     end
 
     private def devise_scope
-      @devise_scope ||= Devise::Mapping.find_scope!(self)
+      self.class.name.underscore
     end
   end
 

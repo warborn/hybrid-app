@@ -1,22 +1,18 @@
 module Api
-  class GraphqlController < ApplicationController
+  class GraphqlController < ApiController
     # If accessing from outside this domain, nullify the session
     # This allows for outside API access while preventing CSRF attacks,
     # but you'll have to authenticate your user separately
     # protect_from_forgery with: :null_session
-    before_action :authenticate_api_user!
-    before_action :set_current_user
-
-    def set_current_user
-      @current_user ||= warden.authenticate(scope: :api_user)
-    end
+    before_action :authenticate_api_user!, if: :protected_endpoint?
 
     def execute
       variables = ensure_hash(params[:variables])
       query = params[:query]
       operation_name = params[:operationName]
       context = {
-        current_user: @current_user,
+        current_user: current_user,
+        token: request.headers['Authorization']
       }
       result = HyrbridAppSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
       render json: result
@@ -50,6 +46,12 @@ module Api
       logger.error e.backtrace.join("\n")
 
       render json: { errors: [{ message: e.message, backtrace: e.backtrace }], data: {} }, status: 500
+    end
+
+    def protected_endpoint?
+      visitor = Lib::ModelsVisitor.new(params[:query])
+      visitor.visit
+      visitor.protected_model_count > 0
     end
   end
 end
